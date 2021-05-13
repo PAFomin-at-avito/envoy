@@ -6,6 +6,7 @@
 #include "envoy/config/metrics/v3/stats.pb.validate.h"
 #include "envoy/registry/registry.h"
 
+#include "common/common/macros.h"
 #include "common/network/resolver_impl.h"
 
 #include "extensions/stat_sinks/common/statsd/statsd.h"
@@ -16,6 +17,16 @@ namespace Envoy {
 namespace Extensions {
 namespace StatSinks {
 namespace GraphiteStatsd {
+
+static const Common::Statsd::TagFormat& getGraphiteTagFormat() {
+    CONSTRUCT_ON_FIRST_USE(
+        Common::Statsd::TagFormat,
+        ";",                        // start
+        "=",                        // assign
+        ";",                        // separator
+        Common::Statsd::TagPosition::TagAfterName,  // tag_position
+    );
+}
 
 Stats::SinkPtr
 GraphiteStatsdSinkFactory::createStatsSink(const Protobuf::Message& config,
@@ -35,7 +46,8 @@ GraphiteStatsdSinkFactory::createStatsSink(const Protobuf::Message& config,
     }
     return std::make_unique<Common::Statsd::UdpStatsdSink>(server.threadLocal(), std::move(address),
                                                            true, statsd_sink.prefix(),
-                                                           max_bytes, Common::Statsd::GraphiteTagFormat);
+                                                           max_bytes, getGraphiteTagFormat());
+
   }
   /*
   case envoy::config::metrics::v3::GraphiteStatsdSink::StatsdSpecifierCase::kTcpClusterName:
