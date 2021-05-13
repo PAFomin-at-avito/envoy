@@ -1,5 +1,7 @@
 #pragma once
 
+#include "extensions/stat_sinks/common/statsd/tag_formats.h"
+
 #include "envoy/buffer/buffer.h"
 #include "envoy/common/platform.h"
 #include "envoy/local_info/local_info.h"
@@ -42,14 +44,17 @@ public:
 
   UdpStatsdSink(ThreadLocal::SlotAllocator& tls, Network::Address::InstanceConstSharedPtr address,
                 const bool use_tag, const std::string& prefix = getDefaultPrefix(),
-                absl::optional<uint64_t> buffer_size = absl::nullopt);
+                absl::optional<uint64_t> buffer_size = absl::nullopt,
+                const Statsd::TagFormat tag_format = DefaultTagFormat);
   // For testing.
   UdpStatsdSink(ThreadLocal::SlotAllocator& tls, const std::shared_ptr<Writer>& writer,
                 const bool use_tag, const std::string& prefix = getDefaultPrefix(),
-                absl::optional<uint64_t> buffer_size = absl::nullopt)
+                absl::optional<uint64_t> buffer_size = absl::nullopt,
+                const Statsd::TagFormat tag_format = DefaultTagFormat)
       : tls_(tls.allocateSlot()), use_tag_(use_tag),
         prefix_(prefix.empty() ? getDefaultPrefix() : prefix),
-        buffer_size_(buffer_size.value_or(0)) {
+        buffer_size_(buffer_size.value_or(0)),
+        tag_format_(tag_format) {
     tls_->set(
         [writer](Event::Dispatcher&) -> ThreadLocal::ThreadLocalObjectSharedPtr { return writer; });
   }
@@ -91,6 +96,7 @@ private:
   // Prefix for all flushed stats.
   const std::string prefix_;
   const uint64_t buffer_size_;
+  const Statsd::TagFormat tag_format_;
 };
 
 /**
@@ -100,7 +106,8 @@ class TcpStatsdSink : public Stats::Sink {
 public:
   TcpStatsdSink(const LocalInfo::LocalInfo& local_info, const std::string& cluster_name,
                 ThreadLocal::SlotAllocator& tls, Upstream::ClusterManager& cluster_manager,
-                Stats::Scope& scope, const std::string& prefix = getDefaultPrefix());
+                Stats::Scope& scope, const std::string& prefix = getDefaultPrefix(),
+                const Statsd::TagFormat tag_format = DefaultTagFormat);
 
   // Stats::Sink
   void flush(Stats::MetricSnapshot& snapshot) override;
@@ -147,6 +154,7 @@ private:
 
   // Prefix for all flushed stats.
   const std::string prefix_;
+  [[maybe_unused]] const Statsd::TagFormat tag_format_;
 
   Upstream::ClusterInfoConstSharedPtr cluster_info_;
   ThreadLocal::SlotPtr tls_;
