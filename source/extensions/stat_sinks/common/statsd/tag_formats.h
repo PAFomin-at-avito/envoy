@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "common/common/macros.h"
+
 namespace Envoy {
 namespace Extensions {
 namespace StatSinks {
@@ -23,24 +25,20 @@ struct TagFormat {
 static const TagFormat& getDefaultTagFormat() {
     CONSTRUCT_ON_FIRST_USE(
         TagFormat,
-        {
-            "|#",                        // start
-            ":",                         // assign
-            ",",                         // separator
-            TagPosition::TagAfterValue,  // tag_position
-        }
+        "|#",                        // start
+        ":",                         // assign
+        ",",                         // separator
+        TagPosition::TagAfterValue,  // tag_position
     );
 }
 
 static const TagFormat& getGraphiteTagFormat() {
     CONSTRUCT_ON_FIRST_USE(
         TagFormat,
-        {
-            ";",                        // start
-            "=",                        // assign
-            ";",                        // separator
-            TagPosition::TagAfterName,  // tag_position
-        }
+        ";",                        // start
+        "=",                        // assign
+        ";",                        // separator
+        TagPosition::TagAfterName,  // tag_position
     );
 }
 
