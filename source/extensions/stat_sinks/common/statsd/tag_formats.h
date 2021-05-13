@@ -20,21 +20,29 @@ struct TagFormat {
   const TagPosition tag_position;
 };
 
-// TODO: construct on first use?
-const TagFormat DefaultTagFormat = {
-  "|#",                        // start
-  ":",                         // assign
-  ",",                         // separator
-  TagPosition::TagAfterValue,  // tag_position
-};
+static const TagFormat& getDefaultTagFormat() {
+    CONSTRUCT_ON_FIRST_USE(
+        TagFormat,
+        {
+            "|#",                        // start
+            ":",                         // assign
+            ",",                         // separator
+            TagPosition::TagAfterValue,  // tag_position
+        }
+    );
+}
 
-// TODO: construct on first use?
-const TagFormat GraphiteTagFormat = {
-  ";",                        // start
-  "=",                        // assign
-  ";",                        // separator
-  TagPosition::TagAfterName,  // tag_position
-};
+static const TagFormat& getGraphiteTagFormat() {
+    CONSTRUCT_ON_FIRST_USE(
+        TagFormat,
+        {
+            ";",                        // start
+            "=",                        // assign
+            ";",                        // separator
+            TagPosition::TagAfterName,  // tag_position
+        }
+    );
+}
 
 } // namespace Statsd
 } // namespace Common
