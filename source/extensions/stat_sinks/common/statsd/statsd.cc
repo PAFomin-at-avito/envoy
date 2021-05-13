@@ -47,7 +47,7 @@ void UdpStatsdSink::WriterImpl::writeBuffer(Buffer::Instance& data) {
 UdpStatsdSink::UdpStatsdSink(ThreadLocal::SlotAllocator& tls,
                              Network::Address::InstanceConstSharedPtr address, const bool use_tag,
                              const std::string& prefix, absl::optional<uint64_t> buffer_size,
-                             const Statsd::TagFormat tag_format)
+                             const Statsd::TagFormat& tag_format)
     : tls_(tls.allocateSlot()), server_address_(std::move(address)), use_tag_(use_tag),
       prefix_(prefix.empty() ? Statsd::getDefaultPrefix() : prefix),
       buffer_size_(buffer_size.value_or(0)),
@@ -226,7 +226,7 @@ TcpStatsdSink::TcpStatsdSink(const LocalInfo::LocalInfo& local_info,
                              const std::string& cluster_name, ThreadLocal::SlotAllocator& tls,
                              Upstream::ClusterManager& cluster_manager, Stats::Scope& scope,
                              const std::string& prefix,
-                             const Statsd::TagFormat tag_format)
+                             const Statsd::TagFormat& tag_format)
     : prefix_(prefix.empty() ? Statsd::getDefaultPrefix() : prefix),
       tag_format_(tag_format),
       tls_(tls.allocateSlot()),

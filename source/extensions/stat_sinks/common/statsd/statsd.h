@@ -28,6 +28,16 @@ namespace Statsd {
 
 static const std::string& getDefaultPrefix() { CONSTRUCT_ON_FIRST_USE(std::string, "envoy"); }
 
+[[maybe_unused]] static const Statsd::TagFormat& getDefaultTagFormat() {
+    CONSTRUCT_ON_FIRST_USE(
+        Statsd::TagFormat,
+        "|#",                        // start
+        ":",                         // assign
+        ",",                         // separator
+        TagPosition::TagAfterValue,  // tag_position
+    );
+}
+
 /**
  * Implementation of Sink that writes to a UDP statsd address.
  */
@@ -45,12 +55,12 @@ public:
   UdpStatsdSink(ThreadLocal::SlotAllocator& tls, Network::Address::InstanceConstSharedPtr address,
                 const bool use_tag, const std::string& prefix = getDefaultPrefix(),
                 absl::optional<uint64_t> buffer_size = absl::nullopt,
-                const Statsd::TagFormat tag_format = getDefaultTagFormat());
+                const Statsd::TagFormat& tag_format = getDefaultTagFormat());
   // For testing.
   UdpStatsdSink(ThreadLocal::SlotAllocator& tls, const std::shared_ptr<Writer>& writer,
                 const bool use_tag, const std::string& prefix = getDefaultPrefix(),
                 absl::optional<uint64_t> buffer_size = absl::nullopt,
-                const Statsd::TagFormat tag_format = getDefaultTagFormat())
+                const Statsd::TagFormat& tag_format = getDefaultTagFormat())
       : tls_(tls.allocateSlot()), use_tag_(use_tag),
         prefix_(prefix.empty() ? getDefaultPrefix() : prefix),
         buffer_size_(buffer_size.value_or(0)),
@@ -107,7 +117,7 @@ public:
   TcpStatsdSink(const LocalInfo::LocalInfo& local_info, const std::string& cluster_name,
                 ThreadLocal::SlotAllocator& tls, Upstream::ClusterManager& cluster_manager,
                 Stats::Scope& scope, const std::string& prefix = getDefaultPrefix(),
-                const Statsd::TagFormat tag_format = getDefaultTagFormat());
+                const Statsd::TagFormat& tag_format = getDefaultTagFormat());
 
   // Stats::Sink
   void flush(Stats::MetricSnapshot& snapshot) override;
