@@ -22,7 +22,7 @@ struct TagFormat {
   const TagPosition tag_position;
 };
 
-static const TagFormat& getDefaultTagFormat() {
+const TagFormat& getDefaultTagFormat() {
     CONSTRUCT_ON_FIRST_USE(
         TagFormat,
         "|#",                        // start
@@ -32,7 +32,7 @@ static const TagFormat& getDefaultTagFormat() {
     );
 }
 
-static const TagFormat& getGraphiteTagFormat() {
+const TagFormat& getGraphiteTagFormat() {
     CONSTRUCT_ON_FIRST_USE(
         TagFormat,
         ";",                        // start
