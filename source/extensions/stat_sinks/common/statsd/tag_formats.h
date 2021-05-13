@@ -16,9 +16,9 @@ enum class TagPosition {
 };
 
 struct TagFormat {
-  const std::string & start;
-  const std::string & assign;
-  const std::string & separator;
+  const std::string start;
+  const std::string assign;
+  const std::string separator;
   const TagPosition tag_position;
 };
 
